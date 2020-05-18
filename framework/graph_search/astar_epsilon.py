@@ -77,14 +77,22 @@ class AStarEpsilon(AStar):
 
         min_expending_priority = min(self._calc_node_expanding_priority(node) for node in open_list if node is not None)
         maximum_expending_priority_of_focal = min_expending_priority * (1 + self.focal_epsilon)
-        focal = [node for i, node in enumerate(open_list)
-                 if self._calc_node_expanding_priority(node) <= maximum_expending_priority_of_focal
-                 and (self.max_focal_size is None or i < self.max_focal_size)]
+        temp = self.max_focal_size
+        focal = []
+        for node in open_list:
+            if temp is None or temp is not None and temp > 0:
+                if self._calc_node_expanding_priority(node) <= maximum_expending_priority_of_focal:
+                    focal.append(node)
+                    if temp:
+                        temp -= 1
+
+        focal = focal[:self.max_focal_size] if self.max_focal_size else focal
         focal_priorities = [self.within_focal_priority_function(node, problem, self) for node in focal]
         min_node = focal[np.argmin(np.array(focal_priorities))]
 
         if len(open_list):
             open_list.remove(min_node)
+            self.close.add_node(min_node)
             for node in open_list.__reversed__():
                 self.open.push_node(node)
 
