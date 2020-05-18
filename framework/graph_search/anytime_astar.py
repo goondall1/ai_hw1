@@ -85,13 +85,16 @@ class AnytimeAStar(GraphProblemSolver):
                 #   the best found solution so far.
                 #  Make sure to also read the big comment in the head of this class.
                 delta = (high_heuristic_weight-low_heuristic_weight)/2
+                print("delta is" + str(delta))
                 weight = low_heuristic_weight + delta
+                print("trying with weight  = " + str(weight))
                 astar = AStar(self.heuristic_function_type,weight,self.max_nr_states_to_expand_per_iteration)
                 solution = astar.solve_problem(problem)
+                max_nr_stored_states = max(max_nr_stored_states, solution.max_nr_stored_states)
+                total_nr_expanded_states += solution.nr_expanded_states
                 if solution.is_solution_found:
+                    print("found solution with weight = " + str(weight))
                     high_heuristic_weight = weight
-                    total_nr_expanded_states += solution.nr_expanded_states
-                    max_nr_stored_states = max(max_nr_stored_states,solution.max_nr_stored_states)
                     if solution.solution_g_cost < best_solution.solution_g_cost:
                         best_solution = solution
                 else:
