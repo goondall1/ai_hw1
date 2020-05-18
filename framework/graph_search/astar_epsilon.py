@@ -84,8 +84,8 @@ class AStarEpsilon(AStar):
         min_node = focal[np.argmin(np.array(focal_priorities))]
 
         if len(open_list):
+            open_list.remove(min_node)
             for node in open_list.__reversed__():
                 self.open.push_node(node)
-            open_list.remove(min_node)
 
         return min_node
